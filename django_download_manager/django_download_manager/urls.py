@@ -24,10 +24,19 @@
 
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from download_manager.views import HomePageView
+from download_manager.views import *
 
 urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', HomePageView.as_view(), name='home'),
+    url(r'^thanks$', ThanksView.as_view(), name='thanks'),
+
+    url(r'^dw/accept/(?P<uuid>[^/]+)$', AcceptView.as_view(), name='accept'),
+    url(r'^dw/reject/(?P<uuid>[^/]+)$', RejectView.as_view(), name='reject'),
+
+
+    url(r'^dw/link/(?P<uuid>[^/]+)$', DownloadView.as_view(), name='link'),
+
+    url(r'^thanks$', ThanksView.as_view(), name='thanks'),
 )

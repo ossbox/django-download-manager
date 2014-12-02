@@ -38,6 +38,55 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect, HttpResponse
+
+
+
+class ThanksView(TemplateView):
+
+    template_name = "thanks.html"
+
+
+
+    def get(self, request,*args, **kwargs):
+        self.object = ""
+        return super(ThanksView, self).get(request, *args, **kwargs)
+
+
+
+class AcceptView(SingleObjectMixin, TemplateView):
+
+    template_name = "accept.html"
+
+
+    def get(self, request, hash_id=None,*args, **kwargs):
+        self.object = ""
+
+
+        # This could be refactor (next time I hack )
+        subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, _e
+
+        html_content = '<p>Dear Administrator,</p>'
+        html_content += 'Please download: %s <br />' % ()
+
+        html_content += "<br /><br />See you next download! "
+
+
+        msg = EmailMultiAlternatives(subject, "", from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+
+        return super(AcceptView, self).get(request, *args, **kwargs)
+
+class RejectView(SingleObjectMixin, TemplateView):
+
+    template_name = "reject.html"
+    def get(self, request,  hash_id=None,*args, **kwargs):
+        self.object = ""
+        return super(RejectView, self).get(request, *args, **kwargs)
+
 class HomePageView(SingleObjectMixin, TemplateView):
 
     template_name = "form.html"
@@ -81,7 +130,7 @@ class HomePageView(SingleObjectMixin, TemplateView):
 
 
                 # This could be refactor (next time I hack )
-                subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, _e
+                subject, from_email, to = settings.PROJECT_NAME + ' [DownloadRequest]', settings.DEFAULT_FROM_EMAIL, _e
 
                 html_content = '<p>Dear Administrator,</p>'
                 html_content += 'Please validate this download request:<br />'
@@ -106,7 +155,8 @@ class HomePageView(SingleObjectMixin, TemplateView):
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
-            return super(HomePageView, self).get(request, *args, **kwargs)
+            #return super(HomePageView, self).get(request, *args, **kwargs)
+            return HttpResponseRedirect(reverse('thanks', ))
         else:
             return HttpResponse(status=400)
 
