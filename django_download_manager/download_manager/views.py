@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2014 - Luís A. Bastião Silva
 
 # Author: Luís A. Bastião Silva
@@ -22,5 +23,53 @@
 
 from django.shortcuts import render
 
+from django.views.generic import View
+from django.views.generic.base import TemplateView
+
+from django.views.generic.detail import SingleObjectMixin
+
+from download_manager.models import *
+from django.views import generic
 
 
+class HomePageView(SingleObjectMixin, TemplateView):
+
+    template_name = "form.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = ""
+        return super(HomePageView, self).get(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        self.object = ""
+        print "check what is happening"
+        return super(HomePageView, self).get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(HomePageView, self).get_context_data(**kwargs)
+        context['name'] = "Form"
+        return context
+
+
+
+class DownloadView(SingleObjectMixin, TemplateView):
+
+    template_name = "form.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = ""
+        return super(DownloadView, self).get(request, *args, **kwargs)
+
+
+    def post(self, request, *args, **kwargs):
+        self.object = ""
+        print "check what is happening"
+        return super(DownloadView, self).get(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(DownloadView, self).get_context_data(**kwargs)
+        context['name'] = "Form"
+        return context

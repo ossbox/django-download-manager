@@ -86,6 +86,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR,"..", "download_manager", "static"),
+
+)
+
+
 # For Sidebar Menu (List of apps and models) (RECOMMENDED)
 from django.conf import global_settings
 TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
