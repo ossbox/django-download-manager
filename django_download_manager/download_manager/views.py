@@ -66,6 +66,9 @@ class AcceptView(SingleObjectMixin, TemplateView):
 
         print hash_id
         dr = DownloadRequest.objects.get(hashLink=hash_id)
+        if (not dr.pending):
+            html = "<html><body>This request has been already handled. Approved = %s </body></html>" % str(dr.approved)
+            return HttpResponse(html)
         dr.pending = False
         dr.approved = True
         dr.save()
@@ -76,6 +79,7 @@ class AcceptView(SingleObjectMixin, TemplateView):
         html_content += 'Please download: %s <br />' % (settings.BASE_URL + "dw/link/" + hash_id)
 
         html_content += "<br /><br />See you next download! "
+        html_content += "<br />Dicoogle Team. "
 
 
         msg = EmailMultiAlternatives(subject, "", from_email, [to])
@@ -93,8 +97,27 @@ class RejectView(SingleObjectMixin, TemplateView):
         print "reject"
         print hash_id
         dr = DownloadRequest.objects.get(hashLink=hash_id)
+        if (not dr.pending):
+            html = "<html><body>This request has been already handled. Approved = %s </body></html>" % str(dr.approved)
+            return HttpResponse(html)
+
         dr.pending = False
         dr.save()
+
+                # This could be refactor (next time I hack )
+        subject, from_email, to = settings.PROJECT_NAME + ' - Download Manager', settings.DEFAULT_FROM_EMAIL, dr.communityUser.email
+
+        html_content = '<p>Dear %s,</p>' % dr.communityUser.name
+        html_content += 'Your download request has been rejected. <br />'
+
+        html_content += "<br /><br />Best Regards, "
+        html_content += "<br />Dicoogle Team. "
+
+
+        msg = EmailMultiAlternatives(subject, "", from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
         return super(RejectView, self).get(request, *args, **kwargs)
 
 class HomePageView(SingleObjectMixin, TemplateView):
