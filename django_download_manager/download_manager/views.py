@@ -138,6 +138,10 @@ class HomePageView(SingleObjectMixin, TemplateView):
             # This is a hard hack - I will fix it later.
             print direct
             if direct=="1":
+
+                if (not _dr.resource.startswith('D_')):
+                    return HttpResponse(status=400)
+
                 hash_id = str(_dr.hashLink)
                 dr = DownloadRequest.objects.get(hashLink=hash_id)
                 dr.pending = False
