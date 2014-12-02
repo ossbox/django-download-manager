@@ -43,7 +43,7 @@ class CommunityUser(models.Model):
 
     last_modification = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    removed = models.BooleanField(default=False, help_text="Remove logically the fingerprint")
+    removed = models.BooleanField(default=False, help_text="")
 
     def __unicode__(self):
         return " Name " + self.name
