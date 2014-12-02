@@ -33,6 +33,11 @@ from django.views import generic
 
 from django.http import HttpResponse
 import uuid
+
+from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
+
 class HomePageView(SingleObjectMixin, TemplateView):
 
     template_name = "form.html"
@@ -58,6 +63,7 @@ class HomePageView(SingleObjectMixin, TemplateView):
             _user.phone = request.POST.get("phone", "")
             _user.homepage = request.POST.get("homepage", "")
             _user.organization = request.POST.get("organization", "")
+            _user.country = request.POST.get("country", "")
             _user.description = request.POST.get("description", "")
             _user.name = request.POST.get("name", "")
             _user.save()
@@ -69,7 +75,36 @@ class HomePageView(SingleObjectMixin, TemplateView):
             _dr.resource = resource
             _dr.hashLink =uuid.uuid4()
             _dr.save()
+            print "sending email"
+            print settings.ADMINS
+            for (_n, _e) in settings.ADMINS:
 
+
+                # This could be refactor (next time I hack )
+                subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, _e
+
+                html_content = '<p>Dear Administrator,</p>'
+                html_content += 'Please validate this download request:<br />'
+                html_content += 'Name: : %s <br />' % _user.name
+                html_content += 'Address:  %s <br />' % _user.address
+                html_content += 'Email:  %s <br />' % _user.email
+                html_content += 'Phone number:  %s <br />' % _user.phone
+                html_content += 'Home Page/LinkedIn/or any other public profile available: %s <br />' % _user.homepage
+                html_content += 'Company/Organization: :  %s <br />' % _user.organization
+                html_content += 'Country: : %s <br />' % _user.country
+                html_content += 'Dicoogle Interest (R&D, Comercial Use, Developer, Educational - please describe):  %s <br />' % _user.description
+                html_content += 'Resource to download: : %s <br />' % _dr.resource
+
+                html_content += "<br /> To accept: %s " % (settings.BASE_URL + "dw/accept/" + str(_dr.hashLink))
+                html_content += "<br /> To reject: %s " % (settings.BASE_URL + "dw/reject/" + str(_dr.hashLink))
+
+
+                html_content += "<br /><br />See you next download! "
+
+
+                msg = EmailMultiAlternatives(subject, "", from_email, [to])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
 
             return super(HomePageView, self).get(request, *args, **kwargs)
         else:

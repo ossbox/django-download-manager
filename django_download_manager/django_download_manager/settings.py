@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for django_download_manager project.
 
@@ -23,7 +24,7 @@ SECRET_KEY = 'k%i6ur(f@+a$-!34g2-u+xj-h1%)v0qnb55qxhu=_v3sx^gi@s'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
-
+BASE_URL = "http://localhost:8000/"
 ALLOWED_HOSTS = []
 
 
@@ -90,6 +91,11 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR,"..", "download_manager", "static"),
 
 )
+try:
+    from local_settings import *
+except:
+    raise
+
 
 
 # For Sidebar Menu (List of apps and models) (RECOMMENDED)
@@ -100,7 +106,4 @@ TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
 BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
 
 
-try:
-    from local_settings import *
-except:
-    pass
+

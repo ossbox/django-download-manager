@@ -35,6 +35,7 @@ class CommunityUser(models.Model):
     homepage =  models.CharField(max_length=255, unique=False, blank=False, null=False)
     facebook =  models.CharField(max_length=255, unique=False, blank=False, null=False)
     linkedin =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    country =  models.CharField(max_length=255, unique=False, blank=False, null=False)
     company =  models.CharField(max_length=255, unique=False, blank=False, null=False)
     organization =  models.CharField(max_length=255, unique=False, blank=False, null=False)
 
