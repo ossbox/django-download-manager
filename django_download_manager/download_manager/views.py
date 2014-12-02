@@ -31,7 +31,8 @@ from django.views.generic.detail import SingleObjectMixin
 from download_manager.models import *
 from django.views import generic
 
-
+from django.http import HttpResponse
+import uuid
 class HomePageView(SingleObjectMixin, TemplateView):
 
     template_name = "form.html"
@@ -43,9 +44,36 @@ class HomePageView(SingleObjectMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         self.object = ""
-        print "check what is happening"
-        return super(HomePageView, self).get(request, *args, **kwargs)
+        if request.method == 'POST':
+            email = request.POST.get("email", "")
 
+            try:
+                _user = CommunityUser.objects.get(email=email)
+            except (CommunityUser.DoesNotExist):
+                _user = CommunityUser()
+
+            _user.email = email
+            _user.name = request.POST.get("name", "")
+            _user.address = request.POST.get("address", "")
+            _user.phone = request.POST.get("phone", "")
+            _user.homepage = request.POST.get("homepage", "")
+            _user.organization = request.POST.get("organization", "")
+            _user.description = request.POST.get("description", "")
+            _user.name = request.POST.get("name", "")
+            _user.save()
+
+            resource = request.GET.get('resource', 'http://www.dicoogle.com')
+
+            _dr = DownloadRequest()
+            _dr.communityUser=_user
+            _dr.resource = resource
+            _dr.hashLink =uuid.uuid4()
+            _dr.save()
+
+
+            return super(HomePageView, self).get(request, *args, **kwargs)
+        else:
+            return HttpResponse(status=400)
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)

@@ -26,18 +26,17 @@ from django.db import models
 
 from django.core.validators import *
 
-
 class CommunityUser(models.Model):
 
-    name =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    address =  models.CharField(max_length=255, unique=True, blank=False, null=False)
+    name =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    address =  models.CharField(max_length=255, unique=False, blank=False, null=False)
     email =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    phone =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    homepage =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    facebook =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    linkedin =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    company =  models.CharField(max_length=255, unique=True, blank=False, null=False)
-    organization =  models.CharField(max_length=255, unique=True, blank=False, null=False)
+    phone =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    homepage =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    facebook =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    linkedin =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    company =  models.CharField(max_length=255, unique=False, blank=False, null=False)
+    organization =  models.CharField(max_length=255, unique=False, blank=False, null=False)
 
     description = models.TextField(blank=True, null=True)
 
@@ -46,7 +45,7 @@ class CommunityUser(models.Model):
     removed = models.BooleanField(default=False, help_text="Remove logically the fingerprint")
 
     def __unicode__(self):
-        return self.email + " to " + self.resource
+        return " Name " + self.name
 
 class DownloadRequest(models.Model):
     communityUser =  models.ForeignKey(CommunityUser, null=False)
@@ -59,4 +58,4 @@ class DownloadRequest(models.Model):
 
 
     def __unicode__(self):
-        return self.email + " to " + self.resource
+        return str(self.communityUser) + " to " + self.resource
