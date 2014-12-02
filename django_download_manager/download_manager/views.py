@@ -70,7 +70,7 @@ class AcceptView(SingleObjectMixin, TemplateView):
         dr.approved = True
         dr.save()
         # This could be refactor (next time I hack )
-        subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, dr.communityUser.email
+        subject, from_email, to = settings.PROJECT_NAME + ' - Download Manager', settings.DEFAULT_FROM_EMAIL, dr.communityUser.email
 
         html_content = '<p>Dear %s,</p>' % dr.communityUser.name
         html_content += 'Please download: %s <br />' % (settings.BASE_URL + "dw/link/" + hash_id)
@@ -128,12 +128,39 @@ class HomePageView(SingleObjectMixin, TemplateView):
             _user.save()
 
             resource = request.GET.get('resource', 'http://www.dicoogle.com')
-
             _dr = DownloadRequest()
             _dr.communityUser=_user
             _dr.resource = resource
             _dr.hashLink =uuid.uuid4()
             _dr.save()
+
+            direct = request.GET.get('direct', 'False')
+            # This is a hard hack - I will fix it later.
+            print direct
+            if direct=="1":
+                hash_id = str(_dr.hashLink)
+                dr = DownloadRequest.objects.get(hashLink=hash_id)
+                dr.pending = False
+                dr.approved = True
+                dr.save()
+                # This could be refactor (next time I hack )
+                subject, from_email, to = settings.PROJECT_NAME + ' - Download Manager', settings.DEFAULT_FROM_EMAIL, dr.communityUser.email
+
+                html_content = '<p>Dear %s,</p>' % dr.communityUser.name
+                html_content += 'Please download: %s <br />' % (settings.BASE_URL + "dw/link/" + hash_id)
+
+                html_content += "<br /><br />See you next download! "
+
+
+                msg = EmailMultiAlternatives(subject, "", from_email, [to])
+                msg.attach_alternative(html_content, "text/html")
+                msg.send()
+
+                return HttpResponseRedirect(reverse('thanks', ))
+
+
+
+
             print "sending email"
             print settings.ADMINS
             for (_n, _e) in settings.ADMINS:
