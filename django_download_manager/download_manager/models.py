@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2014 - Luís A. Bastião Silva
 
 # Author: Luís A. Bastião Silva
@@ -22,6 +23,9 @@
 
 
 from django.db import models
+
+from django.core.validators import *
+
 
 class CommunityUser(models.Model):
 
@@ -50,7 +54,7 @@ class DownloadRequest(models.Model):
     hashLink =  models.CharField(max_length=255, unique=True, blank=False, null=False)
     last_modification = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    pending = models.BooleanField(default=Treu, help_text="Pending?")
+    pending = models.BooleanField(default=True, help_text="Pending?")
     approved = models.BooleanField(default=False, help_text="Approved?")
 
 

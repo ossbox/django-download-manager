@@ -30,12 +30,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'bootstrap_admin', # always before django.contrib.admin
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'download_manager'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,6 +85,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# For Sidebar Menu (List of apps and models) (RECOMMENDED)
+from django.conf import global_settings
+TEMPLATE_CONTEXT_PROCESSORS = global_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+    'django.core.context_processors.request',
+)
+BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
+
 
 try:
     from local_settings import *

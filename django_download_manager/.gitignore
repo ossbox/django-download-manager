@@ -1,0 +1,3 @@
+*.pyc
+django_download_manager/local_settings.py
+db.sqlite3
