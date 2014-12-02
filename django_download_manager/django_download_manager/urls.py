@@ -32,11 +32,11 @@ urlpatterns = patterns('',
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^thanks$', ThanksView.as_view(), name='thanks'),
 
-    url(r'^dw/accept/(?P<uuid>[^/]+)$', AcceptView.as_view(), name='accept'),
-    url(r'^dw/reject/(?P<uuid>[^/]+)$', RejectView.as_view(), name='reject'),
+    url(r'^dw/accept/(?P<hash_id>[^/]+)$', AcceptView.as_view(), name='accept'),
+    url(r'^dw/reject/(?P<hash_id>[^/]+)$', RejectView.as_view(), name='reject'),
 
 
-    url(r'^dw/link/(?P<uuid>[^/]+)$', DownloadView.as_view(), name='link'),
+    url(r'^dw/link/(?P<hash_id>[^/]+)$', DownloadView.as_view(), name='link'),
 
     url(r'^thanks$', ThanksView.as_view(), name='thanks'),
 )

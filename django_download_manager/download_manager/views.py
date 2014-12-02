@@ -40,8 +40,9 @@ from django.conf import settings
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
+from django.views.static import serve
 
-
+import os
 
 class ThanksView(TemplateView):
 
@@ -63,12 +64,16 @@ class AcceptView(SingleObjectMixin, TemplateView):
     def get(self, request, hash_id=None,*args, **kwargs):
         self.object = ""
 
-
+        print hash_id
+        dr = DownloadRequest.objects.get(hashLink=hash_id)
+        dr.pending = False
+        dr.approved = True
+        dr.save()
         # This could be refactor (next time I hack )
-        subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, _e
+        subject, from_email, to = '[DownloadRequest]', settings.DEFAULT_FROM_EMAIL, dr.communityUser.email
 
-        html_content = '<p>Dear Administrator,</p>'
-        html_content += 'Please download: %s <br />' % ()
+        html_content = '<p>Dear %s,</p>' % dr.communityUser.name
+        html_content += 'Please download: %s <br />' % (settings.BASE_URL + "dw/link/" + hash_id)
 
         html_content += "<br /><br />See you next download! "
 
@@ -85,6 +90,11 @@ class RejectView(SingleObjectMixin, TemplateView):
     template_name = "reject.html"
     def get(self, request,  hash_id=None,*args, **kwargs):
         self.object = ""
+        print "reject"
+        print hash_id
+        dr = DownloadRequest.objects.get(hashLink=hash_id)
+        dr.pending = False
+        dr.save()
         return super(RejectView, self).get(request, *args, **kwargs)
 
 class HomePageView(SingleObjectMixin, TemplateView):
@@ -171,9 +181,25 @@ class DownloadView(SingleObjectMixin, TemplateView):
 
     template_name = "form.html"
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, hash_id=None, *args, **kwargs):
         self.object = ""
-        return super(DownloadView, self).get(request, *args, **kwargs)
+
+        dr = DownloadRequest.objects.get(hashLink=hash_id)
+        if not dr.approved:
+            return HttpResponse(status=400)
+
+
+
+        filepath = settings.DOWNLOAD_FOLDER + dr.resource
+
+        mimetype = "application/octet-stream"
+        f = open(filepath, 'r')
+        response = HttpResponse(f.read(), content_type=mimetype)
+        response["Content-Disposition"]= "attachment; filename=%s" % dr.resource
+
+        return response
+
+        #return super(DownloadView, self).get(request, *args, **kwargs)
 
 
     def post(self, request, *args, **kwargs):
