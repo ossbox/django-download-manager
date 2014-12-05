@@ -40,3 +40,9 @@ PROJECT_NAME = "Your project name"
 DOWNLOAD_FOLDER = "/dir/with/your/private/files"
 
 ```
+
+
+
+Author
+-----------------
+Luís A. Bastião Silva
